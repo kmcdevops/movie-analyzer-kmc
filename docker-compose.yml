@@ -1,0 +1,61 @@
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: database
+    environment:
+      POSTGRES_DB: moviereviews
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - movie
+
+  # Model Server (Python Flask)
+  model:
+    build: ./model
+    image: model:1
+    container_name: model
+    networks:
+      - movie
+
+  # Backend (Java Spring Boot)
+  backend:
+    build: ./backend
+    image: backend:15
+    container_name: backend
+    environment:
+      MODEL_SERVER_URL: http://model:5000
+      DB_URL: database
+      DB_PORT: 5432
+      DB_NAME: moviereviews
+      DB_USER: movieuser
+      DB_PASSWORD: moviepass
+    networks:
+      - movie
+    depends_on:
+      - database
+      - model
+
+  # Frontend (React + Express)
+  frontend:
+    build: ./frontend
+    image: frontend:22
+    container_name: frontend
+    environment:
+      BACKEND_API_URL: http://backend:8080
+    networks:
+      - movie
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+networks:
+  movie:
+    driver: bridge
+
+volumes:
+  postgres_data: 
