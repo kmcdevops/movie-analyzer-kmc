@@ -77,6 +77,12 @@ frontend/.stylelintcache
 frontend/build/
 frontend/dist/
 
+# Data directories (but keep src/data/ as it contains source definitions)
+frontend/data/
+frontend/public/data/
+frontend/uploads/
+frontend/downloads/
+
 # Environment variables
 frontend/.env
 frontend/.env.local
