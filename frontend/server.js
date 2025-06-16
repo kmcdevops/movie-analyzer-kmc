@@ -1,6 +1,10 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
+const helmet = require('helmet');
+const cors = require('cors');
+const hpp = require('hpp');
+const xss = require('xss-clean');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,8 +12,14 @@ const PORT = process.env.PORT || 3000;
 // Backend URL for proxying API requests - using BACKEND_API_URL as specified
 const BACKEND_URL = process.env.BACKEND_API_URL || 'http://localhost:8080';
 
-// Add JSON parsing middleware
-app.use(express.json());
+// Security middleware
+app.use(helmet()); // Set security HTTP headers
+app.use(cors()); // Enable CORS
+app.use(xss()); // Sanitize data
+app.use(hpp()); // Prevent HTTP Parameter Pollution
+
+// Add JSON parsing middleware with size limit
+app.use(express.json({ limit: '10kb' })); // Body limit is 10kb
 
 console.log('🚀 Starting Movie Review Frontend Server');
 console.log(`📡 Backend URL: ${BACKEND_URL}`);
@@ -148,7 +158,7 @@ app.use('/api', createProxyMiddleware({
   changeOrigin: true,
   timeout: 30000, // 30 second timeout for proxy requests
   proxyTimeout: 30000, // 30 second proxy timeout
-  secure: false,
+  secure: true, // Enable HTTPS
   ws: false,
   buffer: false, // Don't buffer request/response
   onError: (err, req, res) => {
@@ -161,10 +171,16 @@ app.use('/api', createProxyMiddleware({
     }
   },
   onProxyReq: (proxyReq, req, res) => {
+    // Add security headers to proxy requests
+    proxyReq.setHeader('X-Forwarded-Proto', 'https');
+    proxyReq.setHeader('X-Real-IP', req.ip);
     console.log(`🔄 Proxying: ${req.method} ${req.path} -> ${BACKEND_URL}${req.path}`);
-    // Remove problematic timeout setting
   },
   onProxyRes: (proxyRes, req, res) => {
+    // Add security headers to proxy responses
+    proxyRes.headers['X-Content-Type-Options'] = 'nosniff';
+    proxyRes.headers['X-Frame-Options'] = 'DENY';
+    proxyRes.headers['X-XSS-Protection'] = '1; mode=block';
     console.log(`✅ Proxy Response: ${proxyRes.statusCode} ${req.method} ${req.path}`);
   }
 }));

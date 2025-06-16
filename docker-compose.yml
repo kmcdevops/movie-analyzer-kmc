@@ -21,30 +21,33 @@ services:
     networks:
       - movie
 
-  # Backend (Java Spring Boot)
+  # Backend (Java Spring Boot) - Updated to Java 21, Spring Boot 3.5
   backend:
     build: ./backend
-    image: backend:15
+    image: movie-review-backend:latest
     container_name: backend
     environment:
-      MODEL_SERVER_URL: http://model:5000
-      DB_URL: database
+      # Database connection (keeping original variable names)
+      DB_HOST: database
       DB_PORT: 5432
       DB_NAME: moviereviews
-      DB_USER: movieuser
+      DB_USERNAME: movieuser
       DB_PASSWORD: moviepass
+      MODEL_SERVER_URL: http://model:5000
+      SERVER_PORT: 8080
     networks:
       - movie
     depends_on:
       - database
       - model
 
-  # Frontend (React + Express)
+  # Frontend (React + Express) - Updated to Node 24, React 19.1
   frontend:
     build: ./frontend
-    image: frontend:22
+    image: movie-review-frontend:latest
     container_name: frontend
     environment:
+      # Backend API configuration
       BACKEND_API_URL: http://backend:8080
     networks:
       - movie
@@ -58,4 +61,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data: 
+  postgres_data:
