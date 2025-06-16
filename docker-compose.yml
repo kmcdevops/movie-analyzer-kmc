@@ -16,7 +16,7 @@ services:
   # Model Server (Python Flask)
   model:
     build: ./model
-    image: model:1
+    image: movie-review-model:latest
     container_name: model
     networks:
       - movie
