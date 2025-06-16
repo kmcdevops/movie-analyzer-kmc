@@ -124,9 +124,6 @@ deploy() {
     print_status "Creating namespace..."
     kubectl apply -f "$MANIFEST_DIR/namespace.yaml"
     
-    print_status "Waiting for namespace to be ready..."
-    kubectl wait --for=condition=Active namespace/"$NAMESPACE" --timeout=30s
-    
     # Apply secrets first (needed by other resources)
     apply_manifests "backend"  # Contains backend-secret
     apply_manifests "postgres" # Contains postgres-secret and database resources
