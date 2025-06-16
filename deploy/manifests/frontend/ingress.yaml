@@ -1,0 +1,23 @@
+---
+# Frontend Ingress (Optional - for production use with ingress controller)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: movie-analyzer
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # Add other ingress annotations as needed
+    # nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: movie.artisantek.in  # Change to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000 

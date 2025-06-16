@@ -1,0 +1,64 @@
+---
+# Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: movie-analyzer
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: artisantek/movie-analyzer:backend
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: "database"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "moviereviews"
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DB_USERNAME
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DB_PASSWORD
+        - name: MODEL_SERVER_URL
+          value: "http://model:5000"
+        - name: SERVER_PORT
+          value: "8080"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
