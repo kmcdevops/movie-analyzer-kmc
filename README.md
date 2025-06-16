@@ -105,7 +105,7 @@ git clone <repository-url>
 cd movie-analyzer
 
 # Start all services
-docker-compose up -d
+docker-compose up -d --build
 
 # View logs
 docker-compose logs -f
