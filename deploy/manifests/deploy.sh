@@ -36,7 +36,7 @@ if ! command -v kubectl &> /dev/null; then
 fi
 
 NAMESPACE="movie-analyzer"
-MANIFEST_DIR="$(dirname "$0")/manifests"
+MANIFEST_DIR="$(dirname "$0")"
 
 # Function to apply manifests
 apply_manifests() {
