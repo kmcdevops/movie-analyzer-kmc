@@ -2,10 +2,6 @@
 
 A comprehensive full-stack movie review application with sentiment analysis capabilities, designed for demonstrating modern DevOps practices, microservices architecture, and Kubernetes/Docker deployment strategies.
 
-## 🎬 Overview
-
-Movie Analyzer is a multi-service application that allows users to browse movies, submit reviews, and automatically analyze sentiment using machine learning. The application showcases modern web development practices with Spring Boot, React, Python Flask, and PostgreSQL, all containerized and ready for Kubernetes/Docker deployment.
-
 ### Key Features
 
 - **Movie Reviews**: Browse and submit reviews for 6 popular movies
@@ -13,13 +9,12 @@ Movie Analyzer is a multi-service application that allows users to browse movies
 - **Admin Controls**: Toggle service health, simulate failures, monitor system status
 - **Microservices Architecture**: Separate services for frontend, backend, ML model, and database
 - **Health Monitoring**: Comprehensive health checks and status monitoring
-- **Modern UI**: Responsive React interface with real-time status updates
 
 ## 🏗️ Architecture
 
 The application consists of four main services:
 
-<img src="movie-analyzer-bg.png" alt="Movie Analyzer Architecture" width="1000"/>
+<img src="movieanalyzer-bg.png" alt="Movie Analyzer Architecture" width="1000"/>
 
 ### Services
 
@@ -30,8 +25,7 @@ The application consists of four main services:
   - Movie detail pages with review submission
   - Admin panel for service health monitoring
   - Real-time health checks and status updates
-  - Responsive design with modern UI
-- **Ports**: 3000 (development), exposed via NodePort 30000 in Kubernetes
+- **Ports**: 3000 (development), exposed via Ingress/Nodeport in Kubernetes
 - **Health Endpoint**: `/health`
 
 #### ⚙️ Backend (Spring Boot)
@@ -40,9 +34,6 @@ The application consists of four main services:
   - RESTful API for review management
   - Database integration with JPA/Hibernate
   - Model server communication for sentiment analysis
-  - Admin controls for health simulation
-  - Rate limiting and error handling
-  - Spring Actuator for monitoring
 - **Main Endpoints**:
   - `GET /api/reviews/{movieId}` - Get reviews for a movie
   - `POST /api/reviews` - Submit a new review
@@ -66,12 +57,6 @@ The application consists of four main services:
 
 #### 🗄️ Database (PostgreSQL)
 - **Technology**: PostgreSQL 15-alpine
-- **Features**:
-  - Review storage with sentiment data
-  - User management (movieuser/moviepass)
-  - Sample data included
-  - Performance indexes
-  - Review statistics view
 - **Schema**: `reviews` table with movie_id, review_text, sentiment, rating, timestamps
 
 ## 🚀 Getting Started
@@ -104,18 +89,6 @@ docker-compose down
 
 **Access Points:**
 - Frontend: http://localhost:3000
-
-### Docker Compose Configuration
-
-The `docker-compose.yml` provides:
-
-```yaml
-services:
-  database:    # PostgreSQL 15-alpine
-  model:       # Python Flask sentiment analysis
-  backend:     # Java Spring Boot API
-  frontend:    # React + Express web app
-```
 
 **Environment Variables:**
 - `DB_HOST=database`, `DB_PORT=5432`, `DB_NAME=moviereviews`
