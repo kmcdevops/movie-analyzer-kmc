@@ -19,19 +19,7 @@ Movie Analyzer is a multi-service application that allows users to browse movies
 
 The application consists of four main services:
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Frontend  │───▶│   Backend   │───▶│    Model    │
-│  (React)    │    │(Spring Boot)│    │  (Flask)    │
-│  Port: 3000 │    │ Port: 8080  │    │ Port: 5000  │
-└─────────────┘    └─────────────┘    └─────────────┘
-                            │
-                            ▼
-                   ┌─────────────┐
-                   │ PostgreSQL  │
-                   │ Port: 5432  │
-                   └─────────────┘
-```
+<img src="movie-analyzer-bg.png" alt="Movie Analyzer Architecture" width="1000"/>
 
 ### Services
 
@@ -213,48 +201,18 @@ Deploy using parameterized Helm charts:
 ```bash
 # Install with Helm
 cd deploy/helm
-helm install movie-analyzer . -n movie-analyzer --create-namespace
+helm install movie-analyzer .
 
 # Upgrade deployment
-helm upgrade movie-analyzer . -n movie-analyzer
+helm upgrade movie-analyzer .
 
 # Customize values
-helm install movie-analyzer . -n movie-analyzer --create-namespace \
+helm install movie-analyzer . \
   --set frontend.replicaCount=1 \
   --set backend.resources.requests.memory=1Gi
 
 # Uninstall
-helm uninstall movie-analyzer -n movie-analyzer
-```
-
-**Helm Configuration:**
-
-The Helm chart provides extensive customization through `values.yaml`:
-
-```yaml
-# Resource scaling
-backend.replicaCount: 1
-frontend.replicaCount: 1
-
-# Resource limits
-backend.resources.requests.memory: "512Mi"
-backend.resources.limits.memory: "1Gi"
-
-# Image configuration
-backend.image.repository: artisantek/movie-analyzer
-backend.image.tag: backend
-
-# Service configuration
-frontend.service.nodePort: 30000
-backend.service.port: 8080
-
-# Environment variables
-backend.env.DB_HOST: "database"
-backend.env.MODEL_SERVER_URL: "http://model:5000"
-
-# Ingress (optional)
-ingress.enabled: false
-ingress.host: movie.artisantek.in
+helm uninstall movie-analyzer
 ```
 
 **Helm Structure:**
@@ -303,12 +261,6 @@ Access via the floating admin panel in the frontend:
 2. **Health Toggle Controls**: Simulate service failures
 3. **System Information**: Memory usage, uptime, processor count
 4. **Error Simulation**: Test failure scenarios and recovery
-
-#### Monitoring Endpoints
-- **Backend Status**: `GET /api/admin/status`
-- **Backend Health**: `GET /api/admin/health`
-- **Model Status**: `GET /admin/status`
-- **System Info**: `GET /api/admin/info`
 
 ### Testing Scenarios
 
@@ -473,24 +425,6 @@ The database includes sample reviews for all 6 movies:
 - **Backend**: `/actuator/health` (10s interval)
 - **Frontend**: `/health` (10s interval)  
 - **Model**: `/health` (10s interval)
-
-### Resource Limits
-
-#### Backend
-- **Requests**: 512Mi memory, 500m CPU
-- **Limits**: 1Gi memory, 1000m CPU
-
-#### Frontend
-- **Requests**: 256Mi memory, 250m CPU
-- **Limits**: 512Mi memory, 500m CPU
-
-#### Model
-- **Requests**: 256Mi memory, 250m CPU
-- **Limits**: 512Mi memory, 500m CPU
-
-#### Database
-- **Requests**: 256Mi memory, 250m CPU
-- **Limits**: 512Mi memory, 500m CPU
 
 ## 📁 Project Structure
 
