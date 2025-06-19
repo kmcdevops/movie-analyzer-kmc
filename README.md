@@ -14,7 +14,7 @@ A comprehensive full-stack movie review application with sentiment analysis capa
 
 The application consists of four main services:
 
-<img src="movieanalyzer-bg.png" alt="Movie Analyzer Architecture" width="1000"/>
+<img src="movie-analyzer-dark.png" alt="Movie Analyzer Architecture" width="1000"/>
 
 ### Services
 
